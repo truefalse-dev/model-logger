@@ -5,6 +5,9 @@ namespace ModelLogger\Models\Attributes;
 use ModelLogger\Traits\Makeable;
 use Illuminate\Support\Str;
 
+/**
+ * @method static make(string $params)
+ */
 class BaseType
 {
     use Makeable;
