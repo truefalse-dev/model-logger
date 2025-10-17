@@ -1,6 +1,6 @@
 <?php
 
-namespace Truefalse\ModelLogger;
+namespace ModelLogger;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
