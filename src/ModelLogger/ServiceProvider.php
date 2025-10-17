@@ -2,17 +2,15 @@
 
 namespace Truefalse\ModelLogger;
 
-use Illuminate\Support\ServiceProvider;
-
-class ModelLoggerServiceProvider extends ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     public function boot()
     {
-
+        //
     }
 
     public function register()
     {
-
+        //
     }
 }
