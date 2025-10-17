@@ -1,8 +1,10 @@
 <?php
 
+use ModelLogger\Facades\LoggerFacade;
+
 if (!function_exists('modelLogger')) {
-    function modelLogger($param)
+    function modelLogger()
     {
-        return strtoupper($param);
+        return new LoggerFacade;
     }
 }
