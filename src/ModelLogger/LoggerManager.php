@@ -103,8 +103,8 @@ class LoggerManager
             }
 
             $grouped[$id] = [
-//                'model_type' => $modelType,
-//                'model_id' => $modelId,
+                'model_type' => $modelType,
+                'model_id' => $modelId,
                 'title' => $item->data['titles'][$id] ?? null,
                 'action' => $item->data['actions'][$id] ?? null,
                 'changes' => $item->data['changes'][$id] ?? [],
@@ -112,8 +112,8 @@ class LoggerManager
         }
 
         return collect([
-            'parent_type' => $parentType,
-            'parent_id' => (int) $parentId,
+//            'parent_type' => $parentType,
+//            'parent_id' => (int) $parentId,
             'items' => array_values($grouped),
         ]);
     }
