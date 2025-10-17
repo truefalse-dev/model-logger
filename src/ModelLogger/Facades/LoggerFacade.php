@@ -1,5 +1,7 @@
 <?php
 
+namespace ModelLogger\Facades;
+
 use Illuminate\Support\Facades\Facade;
 
 class LoggerFacade extends Facade
