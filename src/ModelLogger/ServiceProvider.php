@@ -3,6 +3,7 @@
 namespace ModelLogger;
 
 use ModelLogger\Observer;
+use ModelLogger\LoggerManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
 use ModelLogger\Services\SharedHashService;
@@ -44,5 +45,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind(Observer::class, function ($app) {
             return new Observer($app->make(SharedHashService::class), config('model-logger.loggers'));
         });
+
+        $this->app->bind('model-logger', LoggerManager::class);
     }
 }
