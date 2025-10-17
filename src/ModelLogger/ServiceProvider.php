@@ -20,6 +20,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/database/migrations/' => database_path('migrations')
         ], 'migrations');
 
+        $this->app->bind('model-logger', LoggerManager::class);
+
         foreach (config('model-logger.loggers') as $loggerClass) {
             $logger = app($loggerClass);
             foreach (array_keys($logger->config()) as $modelClass) {
@@ -45,7 +47,5 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind(Observer::class, function ($app) {
             return new Observer($app->make(SharedHashService::class), config('model-logger.loggers'));
         });
-
-        $this->app->bind('model-logger', LoggerManager::class);
     }
 }
