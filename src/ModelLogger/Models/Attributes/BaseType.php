@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelLogger\Attributes;
+namespace ModelLogger\Models\Attributes;
 
 use ModelLogger\Traits\Makeable;
 use Illuminate\Support\Str;

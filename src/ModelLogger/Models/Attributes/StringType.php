@@ -1,8 +1,6 @@
 <?php
 
-namespace ModelLogger\Attributes;
-
-use ModelLogger\Attributes\BaseType;
+namespace ModelLogger\Models\Attributes;
 
 class StringType extends BaseType
 {
