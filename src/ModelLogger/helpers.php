@@ -1,10 +1,10 @@
 <?php
 
-use ModelLogger\Facades\LoggerFacade;
+use ModelLogger\LoggerManager;
 
 if (!function_exists('modelLogger')) {
     function modelLogger()
     {
-        return new LoggerFacade;
+        return new LoggerManager;
     }
 }
