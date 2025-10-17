@@ -4,6 +4,7 @@ namespace ModelLogger;
 
 use ModelLogger\Models\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class LoggerManager
 {
@@ -12,6 +13,13 @@ class LoggerManager
 
     private int $limit = self::LIMIT;
     private int $page = self::PAGE;
+    private string $whereRaw;
+
+    public function whereRaw(string $whereRaw): static
+    {
+        $this->whereRaw = $whereRaw;
+        return $this;
+    }
 
     public function limit(int $limit = self::LIMIT): static
     {
@@ -27,7 +35,15 @@ class LoggerManager
 
     public function get(): Collection
     {
-        return Log::query()
+        return $this->query()->get()
+            ->map(function (Log $log) {
+                return $this->item($log);
+            });
+    }
+
+    private function query(): Builder
+    {
+        $query = Log::query()
             ->selectRaw("
                 hash,
                 JSON_OBJECT(
@@ -42,13 +58,16 @@ class LoggerManager
                 ) AS data,
                 MIN(created_at) as first_created_at,
                 MAX(created_at) as last_created_at
-            ")
-            ->groupBy('hash')
-            ->limit($this->limit)
-            ->get()
-            ->map(function (Log $log) {
-                return $this->item($log);
-            });
+            ");
+
+        if(!empty($this->whereRaw)) {
+            $query->whereRaw($this->whereRaw);
+        }
+
+        $query->groupBy('hash')
+            ->limit($this->limit);
+
+        return $query;
     }
 
     private function item($item): Collection
