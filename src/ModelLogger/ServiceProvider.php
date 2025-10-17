@@ -15,6 +15,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/config/model-logger.php' => config_path('model-logger.php'),
         ], 'config');
 
+        $this->publishes([
+            __DIR__.'/database/migrations/' => database_path('migrations')
+        ], 'migrations');
+
         foreach (config('model-logger.loggers') as $loggerClass) {
             $logger = app($loggerClass);
             foreach (array_keys($logger->config()) as $modelClass) {

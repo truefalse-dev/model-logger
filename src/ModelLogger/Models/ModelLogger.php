@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
-class Logger extends Model
+class ModelLogger extends Model
 {
     protected $fillable = [
         'hash',
