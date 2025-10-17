@@ -42,7 +42,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->singleton(SharedHashService::class);
 
         $this->app->bind(Observer::class, function ($app) {
-            return new Observer($app->make(SharedHashService::class), config('change_log.loggers'));
+            return new Observer($app->make(SharedHashService::class), config('model-logger.loggers'));
         });
     }
 }
