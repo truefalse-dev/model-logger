@@ -6,7 +6,7 @@ use ModelLogger\Models\Attributes\BaseType;
 use Illuminate\Database\Eloquent\Model;
 use ModelLogger\Services\LoggerService;
 use ModelLogger\Services\SharedHashService;
-use ModelLogger\Models\ModelLoggger;
+use ModelLogger\Models\Log;
 
 class Observer
 {
@@ -127,7 +127,7 @@ class Observer
 
         $title = $loggerConfig[$modelClass]['title'] ?? null;
 
-        ModelLoggger::create([
+        Log::create([
             'hash' => $this->sharedHashService->getSharedHash(),
             'action' => $action,
             'logger' => $title,

@@ -5,8 +5,15 @@ namespace ModelLogger\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
-class ModelLog extends Model
+class Log extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'model_logs';
+
     protected $fillable = [
         'hash',
         'action',
