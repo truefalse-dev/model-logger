@@ -3,6 +3,7 @@
 namespace ModelLogger;
 
 use ModelLogger\Observer;
+use Illuminate\Support\Str;
 use ModelLogger\LoggerManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         Event::listen('Illuminate\Routing\Events\RouteMatched', function () use ($observer, $sharedHashService) {
             $hash = uniqid('shared_', true);
-            $sharedHashService->setSharedHash($hash);
+            $sharedHashService->setSharedHash(Str::uuid());
         });
     }
 

@@ -27,6 +27,5 @@
                 "ModelLogger\\ServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
