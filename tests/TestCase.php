@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use ModelLogger\Test\Models\User;
 use ModelLogger\Test\Models\Product;
 use ModelLogger\Test\Models\Category;
 use ModelLogger\Test\Loggers\ProductLogger;
@@ -65,7 +66,7 @@ abstract class TestCase extends OrchestraTestCase
 
         $this->createTables('categories', 'products', 'users');
         $this->createRelationTables('category_product');
-        $this->seedModels(Category::class, Product::class);
+        $this->seedModels(User::class, Category::class, Product::class);
     }
 
     protected function migrateModelLogTable(): void
@@ -81,6 +82,10 @@ abstract class TestCase extends OrchestraTestCase
             Schema::create($tableName, function (Blueprint $table) use ($tableName) {
                 $table->increments('id');
                 $table->timestamps();
+
+                if ($tableName === 'users') {
+                    $table->string('name')->nullable();
+                }
 
                 if ($tableName === 'products') {
                     $table->string('name')->nullable();

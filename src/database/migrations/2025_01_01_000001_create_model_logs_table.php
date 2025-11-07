@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('model_logs', function (Blueprint $table) {
             $table->id();
             $table->uuid('hash');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('model_type')->nullable();
             $table->string('model_id')->nullable();
             $table->string('parent_type')->nullable();
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('hash');
+            $table->index('user_id');
             $table->index('section');
             $table->index('logger');
             $table->index('action');

@@ -1,14 +1,17 @@
 <?php
 
 use Faker\Factory as FakerFactory;
+use ModelLogger\Test\Models\User;
 use ModelLogger\Test\Models\Product;
 use ModelLogger\Test\Models\Category;
 use ModelLogger\Services\SessionService;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     $this->faker = FakerFactory::create();
+    $this->user = User::query()->inRandomOrder()->first();
     $this->sessionService = app(SessionService::class);
-    $this->sessionService->setHash(Str::uuid());
+    $this->sessionService->setUser($this->user)->setHash(Str::uuid());
 });
 
 test('create product', function () {
@@ -72,7 +75,6 @@ test('add category to product', function () {
 
     $items = collect(modelLog()->get()->first()->get('items'));
 
-    dump($items);
-
+    // dump($items);
     // dump(modelLog()->get());
 });

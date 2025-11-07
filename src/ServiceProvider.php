@@ -29,7 +29,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         Event::listen('Illuminate\Routing\Events\RouteMatched', function () use ($observer, $sessionService) {
-            $sessionService->setHash(Str::uuid());
+            $sessionService->setUser(auth()->user())->setHash(Str::uuid());
         });
     }
 

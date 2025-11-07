@@ -16,6 +16,7 @@ class Log extends Model
 
     protected $fillable = [
         'hash',
+        'user_id',
         'action',
         'section',
         'logger',

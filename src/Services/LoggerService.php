@@ -29,6 +29,7 @@ class LoggerService
     {
         return Log::create([
             'hash' => $this->sessionService->getHash(),
+            'user_id' => $this->sessionService->getUserId(),
             'action' => $data['action'],
             'section' => $data['section'],
             'logger' => $data['logger'],

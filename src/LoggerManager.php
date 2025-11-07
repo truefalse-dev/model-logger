@@ -48,6 +48,7 @@ class LoggerManager
                 hash,
                 JSON_OBJECT(
                     'sections', JSON_OBJECTAGG(id, section),
+                    'user_id', JSON_OBJECTAGG(id, user_id),
                     'changes', JSON_OBJECTAGG(id, changes),
                     'actions', JSON_OBJECTAGG(id, action),
                     'model', JSON_OBJECTAGG(id, CONCAT(model_type, ':', model_id)),
@@ -118,6 +119,7 @@ class LoggerManager
         }
 
         return collect([
+            'user_id' => $item->data['user_id'][$id] ?? null,
             'parent_type' => $parentType,
             'parent_id' => (int) $parentId,
             'items' => array_values($grouped),

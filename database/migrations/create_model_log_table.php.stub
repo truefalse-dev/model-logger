@@ -11,6 +11,7 @@ class CreateActivityLogTable extends Migration
         Schema::connection(config('database.default'))->create(config('model-logger.table_name'), function (Blueprint $table) {
             $table->id();
             $table->uuid('hash');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('model_type')->nullable();
             $table->string('model_id')->nullable();
             $table->string('parent_type')->nullable();
@@ -22,6 +23,7 @@ class CreateActivityLogTable extends Migration
             $table->timestamps();
 
             $table->index('hash');
+            $table->index('user_id');
             $table->index('section');
             $table->index('logger');
             $table->index('action');
