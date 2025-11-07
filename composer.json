@@ -21,11 +21,28 @@
             "src/helpers.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "ModelLogger\\Test\\": "tests"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "ModelLogger\\ServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.1",
+        "orchestra/testbench": "^10.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "pest"
     }
 }

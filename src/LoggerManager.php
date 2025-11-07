@@ -36,8 +36,8 @@ class LoggerManager
     public function get(): Collection
     {
         return $this->query()->get()
-            ->map(function (Log $log) {
-                return $this->item($log);
+            ->mapWithKeys(function (Log $log) {
+                return [$log->hash => $this->item($log)];
             });
     }
 
@@ -90,7 +90,12 @@ class LoggerManager
         $parentId = null;
 
         foreach ($parent as $id => $parentValue) {
-            [$modelType, $modelId] = explode(':', $item->data['model'][$id] ?? '', 2) + [null, null];
+
+            $modelHash = $item->data['model'][$id];
+
+            [$modelType, $modelId] = isset($modelHash)
+                ? explode(':', $modelHash, 2) + [null, null]
+                : null;
 
             if ($modelId !== null && is_numeric($modelId)) {
                 $modelId = (int) $modelId;
@@ -104,8 +109,8 @@ class LoggerManager
             }
 
             $grouped[$id] = [
-                'model_type' => $modelType,
-                'model_id' => $modelId,
+//                'model_type' => $modelType,
+//                'model_id' => $modelId,
                 'section' => $item->data['sections'][$id] ?? null,
                 'action' => $item->data['actions'][$id] ?? null,
                 'changes' => $item->data['changes'][$id] ?? [],
@@ -113,8 +118,8 @@ class LoggerManager
         }
 
         return collect([
-//            'parent_type' => $parentType,
-//            'parent_id' => (int) $parentId,
+            'parent_type' => $parentType,
+            'parent_id' => (int) $parentId,
             'items' => array_values($grouped),
         ]);
     }
