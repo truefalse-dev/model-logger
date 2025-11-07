@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use ModelLogger\Services\LoggerService;
-use ModelLogger\Services\SharedHashService;
+use ModelLogger\Services\SessionService;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    public function boot(Observer $observer, SharedHashService $sharedHashService)
+    public function boot(Observer $observer, SessionService $sessionService)
     {
         $this->publishes([
             __DIR__ . '/config/model-logger.php' => config_path('model-logger.php'),
@@ -28,9 +28,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             }
         }
 
-        Event::listen('Illuminate\Routing\Events\RouteMatched', function () use ($observer, $sharedHashService) {
-            $hash = uniqid('shared_', true);
-            $sharedHashService->setSharedHash(Str::uuid());
+        Event::listen('Illuminate\Routing\Events\RouteMatched', function () use ($observer, $sessionService) {
+            $sessionService->setHash(Str::uuid());
         });
     }
 
@@ -40,10 +39,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . '/config/model-logger.php', 'model-logger'
         );
 
-        $this->app->singleton(SharedHashService::class);
+        $this->app->singleton(SessionService::class);
 
         $this->app->bind(Observer::class, function ($app) {
-            return new Observer(new LoggerService(config('model-logger.loggers'), $app->make(SharedHashService::class)));
+            return new Observer(new LoggerService(config('model-logger.loggers'), $app->make(SessionService::class)));
         });
     }
 }

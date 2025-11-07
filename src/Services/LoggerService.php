@@ -7,11 +7,11 @@ use ModelLogger\Models\Log;
 class LoggerService
 {
     private array $models = [];
-    private SharedHashService $sharedHashService;
+    private SessionService $sessionService;
 
-    public function __construct(array $loggers, SharedHashService $sharedHashService)
+    public function __construct(array $loggers, SessionService $sessionService)
     {
-        $this->sharedHashService = $sharedHashService;
+        $this->sessionService = $sessionService;
         foreach($loggers as $loggerClass) {
             $logger = app($loggerClass);
             foreach (array_keys($logger->config()) as $modelClass) {
@@ -28,7 +28,7 @@ class LoggerService
     public function saveLog(array $data): Log
     {
         return Log::create([
-            'hash' => $this->sharedHashService->getSharedHash(),
+            'hash' => $this->sessionService->getHash(),
             'action' => $data['action'],
             'section' => $data['section'],
             'logger' => $data['logger'],

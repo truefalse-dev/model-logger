@@ -3,17 +3,15 @@
 use Faker\Factory as FakerFactory;
 use ModelLogger\Test\Models\Product;
 use ModelLogger\Test\Models\Category;
-use ModelLogger\Services\SharedHashService;
+use ModelLogger\Services\SessionService;
 
 beforeEach(function () {
     $this->faker = FakerFactory::create();
-    $this->sharedHashService = app(SharedHashService::class);
-    $this->sharedHashService->setSharedHash(Str::uuid());
+    $this->sessionService = app(SessionService::class);
+    $this->sessionService->setHash(Str::uuid());
 });
 
 test('create product', function () {
-
-    dd($this->sharedHashService);
 
     $name = $this->faker->name;
 
