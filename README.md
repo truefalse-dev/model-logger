@@ -14,6 +14,10 @@ project-root/
 
 Example:
 ```
+use ModelLogger\Logger;
+use ModelLogger\Models\Attributes\StringType;
+use ModelLogger\Models\Attributes\NumberType;
+
 class ProductLogger extends Logger
 {
     protected static string $loggerName = 'Product';
