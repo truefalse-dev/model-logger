@@ -28,14 +28,14 @@ class ProductLogger extends Logger
                 ]
             ],
             CategoryProduct::class => [
-                'parent' => 'product',
+                self::PARENT => 'product',
                 self::SECTION => 'Category',
                 self::ATTRIBUTES => [
                     StringType::make('category.name', 'Name'),
                 ]
             ],
             ProductAttributeValue::class => [
-                'parent' => 'product',
+                self::PARENT => 'product',
                 self::SECTION => 'Attribute value',
                 self::ATTRIBUTES => [
                     StringType::make('attribute_value.name')->markAs('attribute_value.attribute.name'),
