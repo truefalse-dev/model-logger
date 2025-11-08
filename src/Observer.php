@@ -72,7 +72,9 @@ class Observer
             }
 
             $attribute = $objAttribute->getName();
-            $title = $objAttribute->getTitle();
+            $title = $objAttribute->getMark()
+                ? $this->getFieldFromRelationChain($objAttribute->getMark(), $model)
+                : $objAttribute->getTitle();
 
             if (strpos($attribute, '.') !== false) {
                 [$relation, $field] = explode('.', $attribute, 2);
@@ -92,7 +94,7 @@ class Observer
                             'title' => $title,
                             'old' => $objAttribute->getValue($relatedModelClass::find($originalKey)?->$field),
                             'new' => $objAttribute->getValue($relatedModel->$field),
-                        ];;
+                        ];
                     }
                 }
             } else {
@@ -131,5 +133,16 @@ class Observer
             'parent_id' => $parentId,
             'changes' => $changes,
         ]);
+    }
+
+    private function getFieldFromRelationChain(string $chain, Model $model)
+    {
+        $parts = explode('.', $chain);
+        $field = $model->{array_shift($parts)};
+        foreach ($parts as $part) {
+            $field = $field->{$part};
+        }
+
+        return $field;
     }
 }

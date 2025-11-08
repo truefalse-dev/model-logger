@@ -1,0 +1,63 @@
+<?php
+
+use Illuminate\Support\Carbon;
+
+$now = Carbon::now();
+
+return [
+    [
+        'id' => 100,
+        'name' => 'Smartphone Samsung Galaxy S23',
+        'description' => 'Latest Samsung flagship with AMOLED display and powerful processor.',
+        'vendor_id' => 11,
+        'price' => 799.99,
+        'quantity' => 10,
+        'status' => 1,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 101,
+        'name' => 'Apple MacBook Pro 14"',
+        'description' => 'High-performance laptop with M2 chip and Retina display.',
+        'vendor_id' => 10,
+        'price' => 1999.00,
+        'quantity' => 5,
+        'status' => 1,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 102,
+        'name' => 'Sony WH-1000XM5 Headphones',
+        'description' => 'Industry-leading noise cancelling wireless headphones.',
+        'vendor_id' => null,
+        'price' => 349.99,
+        'quantity' => 15,
+        'status' => 1,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 103,
+        'name' => 'Dell 27" 4K UltraSharp Monitor',
+        'description' => 'Professional-grade 4K monitor with accurate colors and USB-C.',
+        'vendor_id' => null,
+        'price' => 549.00,
+        'quantity' => 7,
+        'status' => 1,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 104,
+        'name' => 'Amazon Echo Dot (5th Gen)',
+        'description' => 'Smart speaker with Alexa voice assistant.',
+        'vendor_id' => null,
+        'price' => 49.99,
+        'quantity' => 20,
+        'status' => 1,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+];

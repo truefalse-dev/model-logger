@@ -28,11 +28,11 @@ class SessionService
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getUserId(): int
+    public function getUserId(): int|null
     {
-        return $this->user->id;
+        return $this->user?->id;
     }
 
     /**

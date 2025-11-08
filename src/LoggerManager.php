@@ -103,10 +103,10 @@ class LoggerManager
             }
 
             if (empty($parentValue)) {
-                $parentType = $modelType;
-                $parentId = $modelId;
+                $entityType = $modelType;
+                $entityId = $modelId;
             } else {
-                [$parentType, $parentId] = explode(':', $parentValue, 2) + [null, null];
+                [$entityType, $entityId] = explode(':', $parentValue, 2) + [null, null];
             }
 
             $grouped[$id] = [
@@ -120,8 +120,8 @@ class LoggerManager
 
         return collect([
             'user_id' => $item->data['user_id'][$id] ?? null,
-            'parent_type' => $parentType,
-            'parent_id' => (int) $parentId,
+            'entity_type' => $entityType,
+            'entity_id' => (int) $entityId,
             'items' => array_values($grouped),
         ]);
     }

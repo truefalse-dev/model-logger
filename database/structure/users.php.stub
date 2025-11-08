@@ -1,0 +1,20 @@
+<?php
+
+use Illuminate\Support\Carbon;
+
+$now = Carbon::now();
+
+return [
+    [
+        'id' => 1,
+        'name' => 'John Doe',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 2,
+        'name' => 'Kim Lee',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+];

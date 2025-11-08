@@ -3,9 +3,13 @@
 namespace ModelLogger\Test\Loggers;
 
 use ModelLogger\Logger;
-use ModelLogger\Test\Models\CategoryProduct;
-use ModelLogger\Test\Models\Product;
 use ModelLogger\Models\Attributes\StringType;
+use ModelLogger\Models\Attributes\NumberType;
+
+// Models
+use ModelLogger\Test\Models\Product;
+use ModelLogger\Test\Models\CategoryProduct;
+use ModelLogger\Test\Models\ProductAttributeValue;
 
 class ProductLogger extends Logger
 {
@@ -18,6 +22,9 @@ class ProductLogger extends Logger
                 self::SECTION => 'Product',
                 self::ATTRIBUTES => [
                     StringType::make('name'),
+                    StringType::make('vendor.name'),
+                    NumberType::make('price'),
+                    NumberType::make('quantity'),
                 ]
             ],
             CategoryProduct::class => [
@@ -27,6 +34,13 @@ class ProductLogger extends Logger
                     StringType::make('category.name', 'Name'),
                 ]
             ],
+            ProductAttributeValue::class => [
+                'parent' => 'product',
+                self::SECTION => 'Attribute value',
+                self::ATTRIBUTES => [
+                    StringType::make('attribute_value.name')->markAs('attribute_value.attribute.name'),
+                ]
+            ]
         ];
     }
 }

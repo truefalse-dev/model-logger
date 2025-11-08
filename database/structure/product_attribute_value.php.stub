@@ -1,0 +1,12 @@
+<?php
+
+return [
+    [
+        'product_id' => 100,
+        'attribute_value_id' => 10000,
+    ],
+    [
+        'product_id' => 100,
+        'attribute_value_id' => 10001,
+    ],
+];

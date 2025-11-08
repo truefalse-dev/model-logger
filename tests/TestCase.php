@@ -7,14 +7,23 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use ModelLogger\Test\Models\User;
-use ModelLogger\Test\Models\Product;
-use ModelLogger\Test\Models\Category;
-use ModelLogger\Test\Loggers\ProductLogger;
-use ModelLogger\Test\Loggers\CategoryLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use ModelLogger\ServiceProvider as ModelLoggerServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+
+// Loggers
+use ModelLogger\Test\Loggers\ProductLogger;
+use ModelLogger\Test\Loggers\CategoryLogger;
+
+// Models
+use ModelLogger\Test\Models\User;
+use ModelLogger\Test\Models\Vendor;
+use ModelLogger\Test\Models\Product;
+use ModelLogger\Test\Models\Category;
+use ModelLogger\Test\Models\Attribute;
+use ModelLogger\Test\Models\AttributeValue;
+use ModelLogger\Test\Models\CategoryProduct;
+use ModelLogger\Test\Models\ProductAttributeValue;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -46,7 +55,7 @@ abstract class TestCase extends OrchestraTestCase
 
         config()->set('model-logger.loggers', [
             ProductLogger::class,
-            //CategoryLogger::class,
+            CategoryLogger::class,
         ]);
     }
 
@@ -64,9 +73,9 @@ abstract class TestCase extends OrchestraTestCase
     {
         $this->migrateModelLogTable();
 
-        $this->createTables('categories', 'products', 'users');
-        $this->createRelationTables('category_product');
-        $this->seedModels(User::class, Category::class, Product::class);
+        $this->createTables('categories', 'vendors', 'products', 'users', 'attributes', 'attribute_values');
+        $this->createRelationTables('category_product', 'product_attribute_value');
+        $this->seedModels();
     }
 
     protected function migrateModelLogTable(): void
@@ -87,19 +96,36 @@ abstract class TestCase extends OrchestraTestCase
                     $table->string('name')->nullable();
                 }
 
-                if ($tableName === 'products') {
+                if ($tableName === 'attributes') {
                     $table->string('name')->nullable();
-//                    $table->integer('user_id')->unsigned()->nullable();
-//                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                    $table->text('description')->nullable();
-                    $table->string('interval')->nullable();
-                    $table->decimal('price')->nullable();
-                    $table->string('status')->nullable();
+                    $table->string('type')->nullable();
+                }
+
+                if ($tableName === 'attribute_values') {
+                    $table->integer('attribute_id')->nullable();
+                    $table->string('name')->nullable();
                 }
 
                 if ($tableName === 'categories') {
                     $table->string('name')->nullable();
+                    $table->string('status')->default(1);
+                }
+
+                if ($tableName === 'vendors') {
+                    $table->string('name')->nullable();
+                    $table->string('slug')->nullable();
+                }
+
+                if ($tableName === 'products') {
+                    $table->string('name')->nullable();
+                    $table->integer('vendor_id')->unsigned()->nullable();
+//                    $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
+//                    $table->integer('user_id')->unsigned()->nullable();
+//                    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                     $table->text('description')->nullable();
+                    $table->decimal('price')->nullable();
+                    $table->integer('quantity')->default(0);
+                    $table->string('status')->default(1);
                 }
             });
         });
@@ -115,18 +141,30 @@ abstract class TestCase extends OrchestraTestCase
                     $table->integer('category_id')->unsigned()->nullable();
                     $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
                 }
+
+                if ($tableName === 'product_attribute_value') {
+                    $table->integer('attribute_value_id')->unsigned()->nullable();
+                    $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onDelete('cascade');
+                    $table->integer('product_id')->unsigned()->nullable();
+                    $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+                }
             });
         });
     }
 
-    private function seedModels(...$modelClasses): void
+    private function seedModels(): void
     {
-        collect($modelClasses)->each(function (string $modelClass) {
-            for ($i = 0; $i < rand(3, 12); $i++) {
-                $modelClass::query()->insert([
-                    'name' => $this->faker->name,
-                ]);
-            }
+        collect([
+            User::class,
+            Product::class,
+            Category::class,
+            CategoryProduct::class,
+            Vendor::class,
+            Attribute::class,
+            AttributeValue::class,
+            ProductAttributeValue::class,
+        ])->each(function (string $modelClass) {
+            DB::table((new $modelClass)->getTable())->insert(require dirname(__DIR__) . sprintf('/database/structure/%s.php.stub', (new $modelClass)->getTable()));
         });
     }
 }

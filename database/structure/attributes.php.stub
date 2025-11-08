@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Support\Carbon;
+
+$now = Carbon::now();
+
+return [
+    [
+        'id' => 1000,
+        'name' => 'Color',
+        'type' => 'string',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 1001,
+        'name' => 'Weight',
+        'type' => 'int',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 1002,
+        'name' => 'Height',
+        'type' => 'int',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 1003,
+        'name' => 'Warranty',
+        'type' => 'int',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+    [
+        'id' => 1004,
+        'name' => 'Country Of Origin',
+        'type' => 'string',
+        'created_at' => $now,
+        'updated_at' => $now,
+    ],
+];
