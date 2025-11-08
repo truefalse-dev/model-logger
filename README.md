@@ -11,9 +11,8 @@ project-root/
 │   ├── Models/
 │   │   └── Loggers/
 ```
-
 Example:
-```
+```php
 use ModelLogger\Logger;
 use ModelLogger\Models\Attributes\StringType;
 use ModelLogger\Models\Attributes\NumberType;
@@ -53,11 +52,11 @@ class ProductLogger extends Logger
 }
 ```
 Publish the package configuration file
-```
+```bash
 php artisan vendor:publish --provider="ModelLogger\ServiceProvider" --tag=config
 ```
 This will create a file ```model-logger.php```
-```
+```php
 return [
     'loggers' => [
         \App\Models\Loggers\ProductLogger::class,
@@ -66,11 +65,11 @@ return [
 ];
 ```
 Publish the package migration
-```
+```bash
 php artisan vendor:publish --provider="ModelLogger\ServiceProvider" --tag=migrations
 ```
 The function should return the existing log
-```
+```php
 $logger = modelLog()
     ->limit(10)
     ->get();
