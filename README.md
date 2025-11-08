@@ -3,6 +3,10 @@
 ### Main Idea
 The log is created from Eloquent model events via Observers attached both to the models themselves and to their related models through relationships.
 
+### Installation
+```bash
+composer require truefalse-dev/model-logger
+```
 ### Implementation
 Create a Logger configuration file in recommended folder ```Loggers```
 ```
@@ -74,3 +78,9 @@ $logger = modelLog()
     ->limit(10)
     ->get();
 ```
+### Testing
+```bash
+composer test
+```
+### License
+The MIT License (MIT). Please see [License File](https://github.com/truefalse-dev/model-logger/blob/master/LICENSE.md) for more information.
