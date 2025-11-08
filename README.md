@@ -59,7 +59,7 @@ Publish the package configuration file
 ```bash
 php artisan vendor:publish --provider="ModelLogger\ServiceProvider" --tag=config
 ```
-This will create a file ```model-logger.php```
+This will create a file ```config/model-logger.php```
 ```php
 return [
     'loggers' => [
@@ -68,15 +68,14 @@ return [
     ]
 ];
 ```
-Publish the package migration
+Publish the package migration and migrate
 ```bash
 php artisan vendor:publish --provider="ModelLogger\ServiceProvider" --tag=migrations
+php artisan migrate
 ```
-The function should return the existing log
+This should return the existing log
 ```php
-$logger = modelLog()
-    ->limit(10)
-    ->get();
+$logger = modelLog()->limit(10)->get();
 ```
 ### Testing
 ```bash
