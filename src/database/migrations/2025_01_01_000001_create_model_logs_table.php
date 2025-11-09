@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('model_logs', function (Blueprint $table) {
+        Schema::create(config('model-logger.table_name'), function (Blueprint $table) {
             $table->id();
             $table->uuid('hash');
             $table->unsignedBigInteger('user_id')->nullable();
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('model_logs');
+        Schema::dropIfExists(config('model-logger.table_name'));
     }
 };
