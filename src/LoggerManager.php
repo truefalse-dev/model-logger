@@ -5,6 +5,7 @@ namespace ModelLogger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use ModelLogger\Models\Log;
+use phpDocumentor\Reflection\Utils;
 
 class LoggerManager
 {
@@ -122,7 +123,20 @@ class LoggerManager
             'user_id' => $item->data['user_id'][$id] ?? null,
             'entity_type' => $entityType,
             'entity_id' => (int) $entityId,
-            'items' => array_values($grouped),
+            'items' => $this->joinChanges(array_values($grouped)),
         ]);
+    }
+
+    private function joinChanges(array $items): array
+    {
+        return collect($items)->flatMap(function ($item) {
+            return collect($item['changes'])->map(function ($change) use ($item) {
+                $change['section'] = $item['section'];
+                $change['action'] = $item['action'];
+                return $change;
+            });
+        })
+            ->groupBy('section')
+            ->all();
     }
 }

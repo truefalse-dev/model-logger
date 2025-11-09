@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Factory as FakerFactory;
+use ModelLogger\Observer;
 use ModelLogger\Services\SessionService;
 use Illuminate\Support\Facades\DB;
 
@@ -28,17 +29,12 @@ test('create product', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->first();
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('create');
-    expect($element['changes']['name']['old'])->toBe(null);
-    expect($element['changes']['name']['new'])->toBe($name);
+    expect(existsElement($items->get('Product'), null, $name, Observer::CREATE, 'Name'))->toBeTrue();
 });
 
 test('create product with vendor', function () {
     $name = $this->faker->name;
-
     $vendor = Vendor::find(10);
 
     $product = Product::query()->create([
@@ -47,14 +43,9 @@ test('create product with vendor', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('create');
-    expect($element['changes']['name']['old'])->toBe(null);
-    expect($element['changes']['name']['new'])->toBe($name);
-    expect($element['changes']['vendor.name']['old'])->toBe(null);
-    expect($element['changes']['vendor.name']['new'])->toBe($vendor->name);
+    expect(existsElement($items->get('Product'), null, $name, Observer::CREATE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Product'), null, $vendor->name, Observer::CREATE, 'Vendor name'))->toBeTrue();
 });
 
 test('update product, 3 fields', function () {
@@ -76,21 +67,10 @@ test('update product, 3 fields', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('update');
-
-    expect(count($element['changes']))->toEqual(3);
-
-    expect($element['changes']['name']['old'])->toBe($oldName);
-    expect($element['changes']['name']['new'])->toBe($newName);
-
-    expect($element['changes']['price']['old'])->toBe($oldPrice);
-    expect($element['changes']['price']['new'])->toBe($newPrice);
-
-    expect($element['changes']['quantity']['old'])->toBe($oldQuantity);
-    expect($element['changes']['quantity']['new'])->toBe($newQuantity);
+    expect(existsElement($items->get('Product'), $oldName, $newName, Observer::UPDATE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Product'), $oldPrice, $newPrice, Observer::UPDATE, 'Price'))->toBeTrue();
+    expect(existsElement($items->get('Product'), $oldQuantity, $newQuantity, Observer::UPDATE, 'Quantity'))->toBeTrue();
 });
 
 test('update vendor in product', function () {
@@ -103,13 +83,8 @@ test('update vendor in product', function () {
     $product->save();
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('update');
-
-    expect($element['changes']['vendor.name']['old'])->toBe($oldVendor->name);
-    expect($element['changes']['vendor.name']['new'])->toBe($newVendor->name);
+    expect(existsElement($items->get('Product'), $oldVendor->name, $newVendor->name, Observer::UPDATE, 'Vendor name'))->toBeTrue();
 });
 
 test('add product to new category', function () {
@@ -123,12 +98,8 @@ test('add product to new category', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('create');
-    expect($element['changes']['category.name']['old'])->toBe(null);
-    expect($element['changes']['category.name']['new'])->toBe($additionalCategory->name);
+    expect(existsElement($items->get('Categories'), null, $additionalCategory->name, Observer::CREATE, 'Name'))->toBeTrue();
 });
 
 test('change product category', function () {
@@ -141,17 +112,9 @@ test('change product category', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $firstElement = $items->get(0);
-    $secondElement = $items->get(1);
 
-    expect($items->count())->toEqual(2);
-    expect($firstElement['action'])->toBe('delete');
-    expect($firstElement['changes']['category.name']['old'])->toBe($currentCategory->name);
-    expect($firstElement['changes']['category.name']['new'])->toBe(null);
-
-    expect($secondElement['action'])->toBe('create');
-    expect($secondElement['changes']['category.name']['old'])->toBe(null);
-    expect($secondElement['changes']['category.name']['new'])->toBe($additionalCategory->name);
+    expect(existsElement($items->get('Categories'), $currentCategory->name, null, Observer::DELETE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Categories'), null, $additionalCategory->name, Observer::CREATE, 'Name'))->toBeTrue();
 });
 
 test('change product attributes', function () {
@@ -165,26 +128,15 @@ test('change product attributes', function () {
         $newAttributeValue,
     ]);
 
+//    $product->reviews()->create([
+//        'description' => $this->faker->sentence(),
+//    ]);
+
     $items = collect(modelLog()->get()->first()->get('items'));
-    $firstElement = $items->get(0);
-    $secondElement = $items->get(1);
-    $thirdElement = $items->get(2);
 
-    expect($items->count())->toEqual(3);
-    expect($firstElement['action'])->toBe('delete');
-    expect($firstElement['changes']['attribute_value.name']['old'])->toBe($oldAttributeValue1->name);
-    expect($firstElement['changes']['attribute_value.name']['new'])->toBe(null);
-    expect($firstElement['changes']['attribute_value.name']['title'])->toBe($newAttributeValue->attribute->name);
-
-    expect($secondElement['action'])->toBe('delete');
-    expect($secondElement['changes']['attribute_value.name']['old'])->toBe($oldAttributeValue2->name);
-    expect($secondElement['changes']['attribute_value.name']['new'])->toBe(null);
-    expect($secondElement['changes']['attribute_value.name']['title'])->toBe($newAttributeValue->attribute->name);
-
-    expect($thirdElement['action'])->toBe('create');
-    expect($thirdElement['changes']['attribute_value.name']['old'])->toBe(null);
-    expect($thirdElement['changes']['attribute_value.name']['new'])->toBe($newAttributeValue->name);
-    expect($thirdElement['changes']['attribute_value.name']['title'])->toBe($newAttributeValue->attribute->name);
+    expect(existsElement($items->get('Attributes'), $oldAttributeValue1->name, null, Observer::DELETE, 'Color'))->toBeTrue();
+    expect(existsElement($items->get('Attributes'), $oldAttributeValue2->name, null, Observer::DELETE, 'Color'))->toBeTrue();
+    expect(existsElement($items->get('Attributes'), null, $newAttributeValue->name, Observer::CREATE, 'Color'))->toBeTrue();
 });
 
 test('delete product', function () {
@@ -197,17 +149,8 @@ test('delete product', function () {
     $product->delete();
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('delete');
-
-    expect($element['changes']['name']['old'])->toBe($oldName);
-    expect($element['changes']['name']['new'])->toBe(null);
-
-    expect($element['changes']['price']['old'])->toEqual($oldPrice);
-    expect($element['changes']['price']['new'])->toEqual(null);
-
-    expect($element['changes']['quantity']['old'])->toEqual($oldQuantity);
-    expect($element['changes']['quantity']['new'])->toEqual(null);
+    expect(existsElement($items->get('Product'), $oldName, null, Observer::DELETE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Product'), $oldPrice, null, Observer::DELETE, 'Price'))->toBeTrue();
+    expect(existsElement($items->get('Product'), $oldQuantity, null, Observer::DELETE, 'Quantity'))->toBeTrue();
 });

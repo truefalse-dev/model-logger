@@ -1,5 +1,6 @@
 <?php
 
+use ModelLogger\Observer;
 use Faker\Factory as FakerFactory;
 use ModelLogger\Services\SessionService;
 use Illuminate\Support\Facades\DB;
@@ -28,12 +29,7 @@ test('create category', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->first();
-
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('create');
-    expect($element['changes']['name']['old'])->toBe(null);
-    expect($element['changes']['name']['new'])->toBe($name);
+    expect(existsElement($items->get('Category'), null, $name, Observer::CREATE, 'Name'))->toBeTrue();
 });
 
 test('update category', function () {
@@ -51,41 +47,21 @@ test('update category', function () {
     ]);
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('update');
-
-    expect(count($element['changes']))->toEqual(2);
-
-    expect($element['changes']['name']['old'])->toBe($oldName);
-    expect($element['changes']['name']['new'])->toBe($newName);
-
-    expect($element['changes']['status']['old'])->toBe($oldStatus ? 'On' : 'Off');
-    expect($element['changes']['status']['new'])->toBe($newStatus ? 'On' : 'Off');
+    expect(existsElement($items->get('Category'), $oldName, $newName, Observer::UPDATE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Category'), $oldStatus ? 'On' : 'Off', $newStatus ? 'On' : 'Off', Observer::UPDATE, 'Status'))->toBeTrue();
 });
 
 test('delete category', function () {
-    $product = Product::find(101);
+    $category = Category::find(10);
 
-    $oldName = $product->name;
-    $oldPrice = $product->price;
-    $oldQuantity = $product->quantity;
+    $oldName = $category->name;
+    $oldStatus = $category->status;
 
-    $product->delete();
+    $category->delete();
 
     $items = collect(modelLog()->get()->first()->get('items'));
-    $element = $items->get(0);
 
-    expect($items->count())->toEqual(1);
-    expect($element['action'])->toBe('delete');
-
-    expect($element['changes']['name']['old'])->toBe($oldName);
-    expect($element['changes']['name']['new'])->toBe(null);
-
-    expect($element['changes']['price']['old'])->toEqual($oldPrice);
-    expect($element['changes']['price']['new'])->toEqual(null);
-
-    expect($element['changes']['quantity']['old'])->toEqual($oldQuantity);
-    expect($element['changes']['quantity']['new'])->toEqual(null);
+    expect(existsElement($items->get('Category'), $oldName, null, Observer::DELETE, 'Name'))->toBeTrue();
+    expect(existsElement($items->get('Category'), $oldStatus ? 'On' : 'Off', null, Observer::DELETE, 'Status'))->toBeTrue();
 });

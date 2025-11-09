@@ -40,14 +40,43 @@ abstract class TestCase extends OrchestraTestCase
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'mysql');
-        config()->set('database.connections.mysql.host', 'db');
-        config()->set('database.connections.mysql.database', 'test');
-        config()->set('database.connections.mysql.password', 'root');
+        config()->set('database.default', 'testing');
 
-        config()->set('model-logger.database_connection', config('database.default'));
-        config()->set('model-logger.table_name', 'model_logs');
+        $errors = [];
+        if (empty(env('DB_TESTING_HOST'))) {
+            $errors[] = 'DB_TESTING_HOST not set';
+        }
 
+        if (empty(env('DB_TESTING_DATABASE'))) {
+            $errors[] = 'DB_TESTING_DATABASE not set';
+        }
+
+        if (empty(env('DB_TESTING_USERNAME'))) {
+            $errors[] = 'DB_TESTING_USERNAME not set';
+        }
+
+        if (empty(env('DB_TESTING_PASSWORD'))) {
+            $errors[] = 'DB_TESTING_PASSWORD not set';
+        }
+
+        if ($errors) {
+            throw new \Exception(implode(PHP_EOL, $errors));
+        }
+
+        config()->set('database.connections.testing', [
+            'driver' => 'mysql',
+            'host' => env('DB_TESTING_HOST', '127.0.0.1'),
+            'port' => env('DB_TESTING_PORT', '3306'),
+            'database' => env('DB_TESTING_DATABASE', 'your_test_db'),
+            'username' => env('DB_TESTING_USERNAME', 'your_test_user'),
+            'password' => env('DB_TESTING_PASSWORD', 'your_test_password'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ]);
+        
         config()->set('auth.providers.users.model', User::class);
         config()->set('app.key', 'base64:'.base64_encode(
                 Encrypter::generateKey(config()['app.cipher'])
@@ -62,9 +91,12 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__), '.env.testing');
+        $dotenv->safeLoad();
 
         $this->faker = FakerFactory::create();
+
+        parent::setUp();
 
         $this->setUpDatabase();
     }
@@ -73,7 +105,7 @@ abstract class TestCase extends OrchestraTestCase
     {
         $this->migrateModelLogTable();
 
-        $this->createTables('categories', 'vendors', 'products', 'users', 'attributes', 'attribute_values');
+        $this->createTables('categories', 'vendors', 'products', 'users', 'attributes', 'attribute_values', 'product_reviews');
         $this->createRelationTables('category_product', 'product_attribute_value');
         $this->seedModels();
     }
@@ -114,6 +146,12 @@ abstract class TestCase extends OrchestraTestCase
                 if ($tableName === 'vendors') {
                     $table->string('name')->nullable();
                     $table->string('slug')->nullable();
+                }
+
+                if ($tableName === 'product_reviews') {
+                    $table->integer('product_id')->unsigned()->nullable();
+                    $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+                    $table->text('description')->nullable();
                 }
 
                 if ($tableName === 'products') {

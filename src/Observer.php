@@ -2,6 +2,7 @@
 
 namespace ModelLogger;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use ModelLogger\Models\Attributes\BaseType;
 use ModelLogger\Services\LoggerService;
@@ -67,6 +68,8 @@ class Observer
         $changes = [];
         foreach ($attributes as $objAttribute) {
 
+            $hash = sprintf('attr.%s', Str::random(8));
+
             if (!$objAttribute instanceof BaseType) {
                 continue;
             }
@@ -90,7 +93,7 @@ class Observer
                         /** @var Model $relatedModelClass */
                         $relatedModelClass = get_class($relatedModel);
 
-                        $changes[$attribute] = [
+                        $changes[$hash] = [
                             'title' => $title,
                             'old' => $objAttribute->getValue($relatedModelClass::find($originalKey)?->$field),
                             'new' => $objAttribute->getValue($relatedModel->$field),
@@ -99,7 +102,7 @@ class Observer
                 }
             } else {
                 if ($model->isDirty($attribute) || $action === self::DELETE) {
-                    $changes[$attribute] = [
+                    $changes[$hash] = [
                         'title' => $title,
                         'old' => $objAttribute->getValue($model->getOriginal($attribute)),
                         'new' => $objAttribute->getValue($model->$attribute),

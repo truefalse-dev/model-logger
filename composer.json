@@ -24,7 +24,10 @@
     "autoload-dev": {
         "psr-4": {
             "ModelLogger\\Test\\": "tests"
-        }
+        },
+        "files": [
+            "tests/Helpers.php"
+        ]
     },
     "extra": {
         "laravel": {
